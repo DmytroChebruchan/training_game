@@ -35,20 +35,16 @@ class Labyrinth:
 
 
 class Player:
-    def __init__(
-        self,
-        name: str = "",
-        x: int = 0,
-        y: int = 0,
-        active: bool = False,
-        health: int = 5,
-        items: dict = None,
-    ):
+    name: str
+    active: bool = False
+    x: int = 0
+    y: int = 0
+    location: list = [0, 0]
+    health: int = 5
+    items: dict = {}
+
+    def __init__(self, name):
         self.name = name
-        self.active = active
-        self.location = [x, y]
-        self.health = health
-        self.items = {}
 
     def work_with_objects(self, labyrinth, players_list):
         for _ in labyrinth.labyrinth.items():
@@ -59,7 +55,8 @@ class Player:
             ):
                 if _[1]["objects"] == {"fire": 1}:
                     self.health -= 1
-                    print(f"{self.name} gets in fire, {self.health} points left.")
+                    print(f"{self.name} gets in fire, "
+                          f"{self.health} points left.")
 
                 if _[1]["objects"] == {"heart": 1}:
                     self.health = 5
@@ -73,7 +70,8 @@ class Player:
                 if _[1]["objects"] == {"Golem": 1}:
                     if self.items == {"key": 1}:
                         print(
-                            f"***** {self.name} wins this game! Congratulations! *****"
+                            f"***** {self.name} wins this game! "
+                            f"Congratulations! *****"
                         )
                     else:
                         print(f"{self.name} was killed by Golem!")
@@ -104,16 +102,10 @@ class Player:
                 self.location[1] += dy
                 new_location = [self.location[0], self.location[1]]
 
-                # for index, value in enumerate(labyrinth.labyrinth.items()):
-                #     if value[1]['x'] == prev_location[0] and value[1]['y'] == prev_location[1]:
-                #         prev_location_index = index
-                #
-                #     if value[1]['x'] == new_location[0] and value[1]['y'] == new_location[1]:
-                #         new_location_index = index
                 prev_location_index = next(
                     index
                     for index, value in enumerate(labyrinth.labyrinth.items())
-                    if value[1]["x"] == prev_location[0]
+                    if value[1]["x"] == self.location[0]
                     and value[1]["y"] == prev_location[1]
                 )
 
@@ -132,7 +124,8 @@ class Player:
                             prev_location_index > new_location_index
                             and len(value[1]) == 3
                         ):
-                            print(f"Person tried to run. {self.name}, game over!")
+                            print(f"Person tried to run. {self.name},"
+                                  f" game over!")
                             self.remove_player(players_list)
                             return
 
@@ -146,7 +139,8 @@ class Player:
                                     self.location[0] == cell[0]
                                     and self.location[1] == cell[1]
                                 ):
-                                    print(f"Moved {move_direction} to {self.location}")
+                                    print(f"Moved {move_direction} "
+                                          f"to {self.location}")
                                     return
 
                             else:
@@ -155,14 +149,22 @@ class Player:
                                 self.location[1] -= dy
                                 self.health -= 1
                             print(
-                                f"Wrong vector! {self.name} get 1 damage, {self.health} points left. Current location: {self.location}"
+                                f"Wrong vector! {self.name} get 1 damage,"
+                                f" {self.health} points left. "
+                                f"Current location: {self.location}"
                             )
                             return
 
                     if attempts == 0:
-                        print("Too many wrong inputs. Next player to make " "action.")
+                        print("Too many wrong inputs. "
+                              "Next player to make action.")
                         return
+
+    # def make_step(self, direction):
+    #     self.x += direction[0]
+    #     self.y += direction[1]
 
     def attack_player(self, target_player):
         target_player.health -= 1
-        return f"{target_player.name} lost 1 health point. {target_player.health} health points left"
+        return (f"{target_player.name} lost 1 health point."
+                f"{target_player.health} health points left")
